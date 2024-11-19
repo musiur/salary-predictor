@@ -1,0 +1,16 @@
+fastapi
+pydantic
+uvicorn 
+joblib
+pandas
+numpy
+scikit-learn
+seaborn
+matplotlib
+xgboost
+wordcloud
+flask
+
+# pip install -r requirements.txt
+# python -m uvicorn app:app --reload
+
