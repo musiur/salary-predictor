@@ -15,8 +15,8 @@ ENV/
 # Data files
 *.csv
 *.xlsx
-*.json
-*.pkl
+# *.json
+# *.pkl
 
 # Logs
 *.log
