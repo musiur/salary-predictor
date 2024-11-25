@@ -1,57 +1,61 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+import pickle
+import json
 import pandas as pd
-import joblib
-from sklearn.preprocessing import LabelEncoder
 
-# Initialize the FastAPI app
+# Load the trained model
+with open('model.pkl', 'rb') as f:
+    model = pickle.load(f)
+
+# Load mappings
+with open('mappings.json', 'r') as f:
+    mappings = json.load(f)
+
+# Extract mappings
+gender_mapping = mappings['gender']
+education_mapping = mappings['education']
+designation_mapping = mappings['designation']
+
+# Initialize FastAPI
 app = FastAPI()
 
-# Load the pre-trained model
-model = joblib.load("model.pkl")  # Ensure the correct path to your model
-
-# Define the expected schema
-class PredictionInput(BaseModel):
-    age: float
-    gender: int  # Assuming 1 for Male, 0 for Female
+# Define input schema
+class SalaryPredictionRequest(BaseModel):
+    age: int
+    gender: str
     education: str
     designation: str
-    experience: float
-
-# Initialize encoders for categorical variables
-le_education = LabelEncoder()
-le_designation = LabelEncoder()
-
-# Fit encoders with all possible values (ensure this matches your training data)
-le_education.classes_ = ['high school', 'bachelor', 'master', 'phd']  # Example classes
-le_designation.classes_ = ['junior', 'mid-level', 'senior']  # Example classes
-
-@app.get("/")
-async def root():
-    """
-    Welcome endpoint for the Salary Prediction API.
-    """
-    return {"message": "Welcome to the Salary Prediction API"}
+    experience: int
 
 @app.post("/predict")
-async def predict(data: PredictionInput):
-    """
-    Endpoint to predict salary based on input data.
-    """
-    # Convert input data to a DataFrame
-    input_data = pd.DataFrame([data.dict()])
-
-    # Validate and encode categorical features
+def predict_salary(request: SalaryPredictionRequest):
     try:
-        input_data['education'] = le_education.transform([input_data['education'][0]])
-        input_data['designation'] = le_designation.transform([input_data['designation'][0]])
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=f"Invalid categorical value: {str(e)}")
+        # Map categorical inputs
+        gender = gender_mapping.get(request.gender)
+        education = education_mapping.get(request.education)
+        designation = designation_mapping.get(request.designation)
 
-    # Make prediction
-    try:
-        prediction = model.predict(input_data)
+        # Validate mappings
+        if None in [gender, education, designation]:
+            raise HTTPException(status_code=400, detail="Invalid categorical input")
+
+        # Prepare input for the model as a pandas DataFrame
+        input_data = pd.DataFrame([{
+            "age": request.age,
+            "gender": gender,
+            "education": education,
+            "designation": designation,
+            "experience": request.experience
+        }])
+
+        # Predict salary
+        predicted_salary = model.predict(input_data)
+
+        # Convert numpy.float32 to native Python float
+        salary_as_float = float(predicted_salary[0])
+
+        return {"predicted_salary": round(salary_as_float, 2)}
+
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Prediction failed: {str(e)}")
-
-    return {"predicted_salary": prediction[0]}
+        raise HTTPException(status_code=500, detail=f"Error during prediction: {str(e)}")
