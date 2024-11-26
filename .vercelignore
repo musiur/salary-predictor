@@ -1,5 +1,11 @@
+# Ignore unnecessary files
 __pycache__/
-trainer_with_csv.py
+*.pyc
+*.pyo
+*.pyd
+.ipynb_checkpoints/
 trainer.ipynb
+trainer_with_csv.py
 dataset.csv
 output.png
+README.md
