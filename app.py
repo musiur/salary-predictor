@@ -4,6 +4,7 @@ import pickle
 import json
 import pandas as pd
 import os
+# import modal
 
 # Load the trained model locally
 if not os.path.exists("model.pkl"):
@@ -22,8 +23,15 @@ gender_mapping = mappings['gender']
 education_mapping = mappings['education']
 designation_mapping = mappings['designation']
 
+
+#initialize modal app
+# app = modal.App("salary-predictor")
 # Initialize FastAPI
 app = FastAPI()
+
+
+# image = modal.Image.debian_slim().pip_install("fastapi", "pydantic", "uvicorn", "joblib", "pandas", "numpy", "scikit-learn", "seaborn", "matplotlib", "xgboost", "wordcloud", "flask", "modal")
+# dockerfile_image = modal.Image.from_dockerfile("Dockerfile")
 
 # Define input schema
 class SalaryPredictionRequest(BaseModel):
@@ -74,3 +82,9 @@ def predict_salary(request: SalaryPredictionRequest):
     except Exception as e:
         # Handle unexpected errors
         raise HTTPException(status_code=500, detail=f"Error during prediction: {str(e)}")
+
+
+# @app.function(image=dockerfile_image)
+# @modal.asgi_app()
+# def fastapi_app():
+#     return web_app
