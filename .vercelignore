@@ -1,0 +1,5 @@
+__pycache__/
+trainer_with_csv.py
+trainer.ipynb
+dataset.csv
+output.png

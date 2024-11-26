@@ -3,12 +3,17 @@ from pydantic import BaseModel
 import pickle
 import json
 import pandas as pd
+import os
 
-# Load the trained model
+# Load the trained model locally
+if not os.path.exists("model.pkl"):
+    raise Exception("Model file 'model.pkl' not found. Please ensure it's in the project directory.")
 with open('model.pkl', 'rb') as f:
     model = pickle.load(f)
 
 # Load mappings
+if not os.path.exists("mappings.json"):
+    raise Exception("Mappings file 'mappings.json' not found. Please ensure it's in the project directory.")
 with open('mappings.json', 'r') as f:
     mappings = json.load(f)
 
@@ -31,14 +36,17 @@ class SalaryPredictionRequest(BaseModel):
 @app.post("/predict")
 def predict_salary(request: SalaryPredictionRequest):
     try:
-        # Map categorical inputs
+        # Validate and map categorical inputs
         gender = gender_mapping.get(request.gender)
         education = education_mapping.get(request.education)
         designation = designation_mapping.get(request.designation)
 
-        # Validate mappings
-        if None in [gender, education, designation]:
-            raise HTTPException(status_code=400, detail="Invalid categorical input")
+        if gender is None:
+            raise HTTPException(status_code=400, detail=f"Invalid gender input: {request.gender}")
+        if education is None:
+            raise HTTPException(status_code=400, detail=f"Invalid education input: {request.education}")
+        if designation is None:
+            raise HTTPException(status_code=400, detail=f"Invalid designation input: {request.designation}")
 
         # Prepare input for the model as a pandas DataFrame
         input_data = pd.DataFrame([{
@@ -55,7 +63,14 @@ def predict_salary(request: SalaryPredictionRequest):
         # Convert numpy.float32 to native Python float
         salary_as_float = float(predicted_salary[0])
 
+        # Optional: Log predictions (e.g., to a file or console)
+        # print(f"Prediction made: {request.dict()}, Predicted Salary: {salary_as_float}")
+
         return {"predicted_salary": round(salary_as_float, 2)}
 
+    except HTTPException as http_ex:
+        # Reraise HTTP exceptions for predictable errors
+        raise http_ex
     except Exception as e:
+        # Handle unexpected errors
         raise HTTPException(status_code=500, detail=f"Error during prediction: {str(e)}")
