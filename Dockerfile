@@ -1,20 +1,18 @@
-FROM python:3.9-slim
-
-# Set the working directory
-WORKDIR /app
-
-# Copy necessary files into the Docker image
-COPY requirements.txt ./
-COPY app.py ./
-COPY model.pkl ./
-COPY mappings.json ./
+FROM ubuntu:20.04
 
 # Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN apt-get update && apt-get install -y \
+    curl \
+    build-essential \
+    libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Expose the port and start the server
-EXPOSE 8000
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+# Download and install Ollama (modify with the correct URL if needed)
+RUN curl -L https://ollama.com/download/ollama -o /usr/local/bin/ollama
+RUN chmod +x /usr/local/bin/ollama
 
-# docker build -t salary-predictor .
-# docker run -p 8000:8000 salary-predictor
+# Expose the default port
+EXPOSE 11434
+
+# Start the Ollama server
+CMD ["ollama", "serve"]
