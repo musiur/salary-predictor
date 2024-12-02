@@ -15,3 +15,9 @@ modal
 # pip install -r requirements.txt
 # python -m uvicorn app:app --reload
 # python -m uvicorn ollamaa:app --host 0.0.0.0 --port 7777
+
+
+
+# {
+#     "prompt": "Musiur Alam Opu Frontend Engineer musiuropugmailcom 8801752336446 LinkedIn Github Portfolio Leetcode Skills and techs Frontend JavaScript TypeScript ReactJS NextJS Redux TailwindCSS SCSS Backend NodeJS ExpressJS MongoDB Mail Server Auth validation Concepts OOP SDLC Experiences and responsibilities 3 years Project Manager Rubytech 4th May 2024 Present Project management Frontend development harnessing development team to build our project pipeline smoothly from scratch using techs eg NextJS ExpressJS MongoDB AWS Catopay A payment gateway customize NextJS theme for landing site develop role based dashboard Hotel Omni Residency Made portfolio site using NextJS ShadcnUI TailwindCSS Currently working on both of these projects Executive Full Stack Developer Thesociomatic 5th Oct 2023 Present Full Stack Developer Leading development team to build our portfolio site from scratch using NextJS ExpressJS MongoDB TailwindCSS And contributing to ongoing 4 custom web applications eg Deinhandymarkt Sociomatic v2 Analytics A to Z Sociomantics Marketing Venture Junior Software Engineer Avalon Hosting Services Ltd 24th July 2021 1st June 2022 Privacy Pie Legal policies generator 23th Sep 2021 1 st June 2022 Role Frontend Lead Led Frontend with design and development using Gatsby Redux TailwindCSS etc Ezverter Convert any fi le 21 Dec 22 Mar 2021 Role Frontend Developer Contributed as a Frontend developer and developed landing pages and integrated functionalities with API using Next JS SASS Projects Viso Way Consultancy Doyos Emaardecor Education Bachelor's of Science in Computer Science and Engineering ECE North South University Dhaka Bangladesh 1 Jan 20 Jun 25 Expected"
+# }
